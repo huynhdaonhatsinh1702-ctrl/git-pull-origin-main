@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechMobile - Hệ Thống Bán Lẻ Điện Thoại Chính Hãng</title>
+    <!-- Tải Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tải Font Inter từ Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tải Font Awesome cho các biểu tượng -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#2563eb',
+                        secondary: '#1e40af',
+                        accent: '#f59e0b',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --blue-primary: #2563eb;
+            --blue-soft: #eff6ff;
+            --shadow-soft: 0 16px 40px rgba(15, 23, 42, 0.08);
+        }
+
+        body {
+            background:
+                radial-gradient(circle at top left, rgba(59, 130, 246, 0.10), transparent 36%),
+                radial-gradient(circle at bottom right, rgba(14, 165, 233, 0.08), transparent 28%),
+                #f8fafc;
+        }
+
+        .product-card {
+            position: relative;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.98));
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.03);
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-soft);
+            border-color: rgba(37, 99, 235, 0.35);
+        }
+
+        .product-card__image {
+            background: linear-gradient(135deg, rgba(239,246,255,0.9), rgba(255,255,255,0.85));
+        }
+
+        .brand-btn {
+            box-shadow: inset 0 0 0 1px rgba(148,163,184,0.15);
+        }
+
+        .brand-btn.active {
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.18);
+        }
+
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
+
+    <!-- Thanh thông báo khuyến mãi trên cùng -->
+    <div class="bg-slate-900 text-white text-xs sm:text-sm py-2 px-4 text-center font-medium">
+        <i class="fa-solid fa-bolt text-amber-400 mr-1.5"></i>
+        Ưu đãi đặc biệt: Giảm thêm đến <span class="text-amber-400 font-bold">2.000.000₫</span> khi thu cũ đổi mới & Trả góp 0% lãi suất!
+    </div>
+
+    <!-- Thanh điều hướng chính (Header / Navbar) -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 sm:h-20 gap-4">
+                <!-- Logo thương hiệu -->
+                <a href="#" onclick="resetFilters()" class="flex items-center gap-2.5 flex-shrink-0 group">
+                    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-md shadow-blue-600/20 group-hover:bg-blue-700 transition">
+                        <i class="fa-solid fa-mobile-screen-button text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900">Tech<span class="text-blue-600">Mobile</span></span>
+                        <span class="hidden sm:block text-[10px] uppercase tracking-widest text-slate-400 font-semibold -mt-1">Chính hãng 100%</span>
+                    </div>
+                </a>
+
+                <!-- Thanh tìm kiếm (Desktop & Tablet) -->
+                <div class="hidden md:flex flex-1 max-w-xl mx-4">
+                    <div class="relative w-full">
+                        <input type="text" id="searchInputDesktop" placeholder="Tìm kiếm iPhone 16 Pro Max, Galaxy S24 Ultra, Xiaomi..." 
+                            class="w-full pl-11 pr-4 py-2.5 bg-slate-100 border border-transparent focus:border-blue-500 focus:bg-white rounded-xl text-sm outline-none transition-all shadow-inner">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <button id="clearSearchDesktop" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1">
+                            <i class="fa-solid fa-circle-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Các nút chức năng bên phải -->
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <!-- Hotline hỗ trợ -->
+                    <a href="tel:18006601" class="hidden lg:flex items-center gap-2.5 text-left px-3 py-1.5 rounded-xl hover:bg-slate-100 transition">
+                        <div class="w-9 h-9 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
+                            <i class="fa-solid fa-phone-volume"></i>
+                        </div>
+                        <div>
+                            <div class="text-[11px] text-slate-500 font-medium">Gọi mua hàng</div>
+                            <div class="text-sm font-bold text-slate-900">1800.6601</div>
+                        </div>
+                    </a>
+
+                    <!-- Nút mở Giỏ hàng -->
+                    <button onclick="toggleCartDrawer()" class="relative flex items-center gap-2.5 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3.5 sm:px-4 py-2.5 rounded-xl font-semibold text-sm transition active:scale-95">
+                        <i class="fa-solid fa-cart-shopping text-lg"></i>
+                        <span class="hidden sm:inline">Giỏ hàng</span>
+                        <span id="cartBadge" class="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[22px] text-center shadow-sm">0</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Thanh tìm kiếm cho Mobile -->
+            <div class="pb-3 md:hidden">
+                <div class="relative w-full">
+                    <input type="text" id="searchInputMobile" placeholder="Bạn cần tìm điện thoại gì hôm nay?" 
+                        class="w-full pl-10 pr-4 py-2 bg-slate-100 border border-slate-200 focus:border-blue-500 focus:bg-white rounded-xl text-sm outline-none transition">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Nội dung chính -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8">
+
+        <!-- Banner Khuyến Mãi Hero -->
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-white shadow-xl">
+            <!-- Hiệu ứng trang trí nền -->
+            <div class="absolute -top-24 -right-24 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -left-24 w-80 h-80 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center p-6 sm:p-10 lg:p-12">
+                <div class="lg:col-span-7 space-y-5 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/15 text-amber-300 text-xs sm:text-sm font-semibold backdrop-blur-sm">
+                        <i class="fa-solid fa-fire"></i> SIÊU SALE CÔNG NGHỆ THÁNG NÀY
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+                        Nâng Tầm Trải Nghiệm <br class="hidden sm:block">
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Flagship Đỉnh Cao</span>
+                    </h1>
+                    <p class="text-slate-300 text-sm sm:text-base max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                        Sở hữu ngay các siêu phẩm mới nhất từ Apple, Samsung, Xiaomi và OPPO với mức giá ưu đãi nhất thị trường. Bảo hành chính hãng 24 tháng, giao hàng hỏa tốc 2 giờ.
+                    </p>
+                    <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-2">
+                        <a href="#product-section" class="px-6 py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl shadow-lg shadow-blue-600/30 transition flex items-center gap-2">
+                            <span>Khám phá ngay</span>
+                            <i class="fa-solid fa-arrow-down"></i>
+                        </a>
+                        <button onclick="filterByBrand('iPhone'); document.getElementById('product-section').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/15 backdrop-blur-sm transition">
+                            Xem iPhone Series
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Hình ảnh minh họa sản phẩm nổi bật trên Banner -->
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="relative w-full max-w-sm bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-md shadow-2xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="bg-rose-500 text-white text-xs font-bold px-2.5 py-1 rounded-lg">HOT DEAL -15%</span>
+                            <span class="text-xs text-slate-300 font-medium"><i class="fa-solid fa-shield-halved text-emerald-400 mr-1"></i>Chính hãng VN/A</span>
+                        </div>
+                        <img src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80" 
+                             onerror="this.src='https://placehold.co/600x400/1e293b/ffffff?text=iPhone+16+Pro+Max'"
+                             alt="iPhone 16 Pro Max" 
+                             class="w-full h-48 sm:h-56 object-cover rounded-xl mb-4 shadow-md">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-bold text-lg text-white">iPhone 16 Pro Max</h3>
+                                <p class="text-xs text-slate-400">Titan Sa Mạc • 256GB</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs text-slate-400 line-through">34.990.000₫</div>
+                                <div class="text-lg font-extrabold text-amber-400">31.490.000₫</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Thanh cam kết dịch vụ -->
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 flex items-center gap-3 shadow-sm">
+                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-truck-fast text-lg"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-xs sm:text-sm text-slate-900">Giao hàng siêu tốc</h4>
+                    <p class="text-[11px] sm:text-xs text-slate-500">Miễn phí nội thành 2h</p>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 flex items-center gap-3 shadow-sm">
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-certificate text-lg"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-xs sm:text-sm text-slate-900">100% Chính hãng</h4>
+                    <p class="text-[11px] sm:text-xs text-slate-500">Nguyên seal, đủ VAT</p>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 flex items-center gap-3 shadow-sm">
+                <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-rotate text-lg"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-xs sm:text-sm text-slate-900">Lỗi 1 đổi 1</h4>
+                    <p class="text-[11px] sm:text-xs text-slate-500">Trong 30 ngày đầu tiên</p>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 flex items-center gap-3 shadow-sm">
+                <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-credit-card text-lg"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-xs sm:text-sm text-slate-900">Trả góp 0%</h4>
+                    <p class="text-[11px] sm:text-xs text-slate-500">Duyệt hồ sơ trong 5 phút</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Khu vực Bộ lọc & Danh sách sản phẩm -->
+        <section id="product-section" class="space-y-6 scroll-mt-24">
+            <!-- Thanh điều khiển Bộ lọc & Sắp xếp -->
+            <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <!-- Bộ lọc theo hãng -->
+                    <div class="space-y-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block">Chọn thương hiệu</span>
+                        <div id="brandFilters" class="flex flex-wrap gap-2">
+                            <button onclick="filterByBrand('All')" data-brand="All" class="brand-btn active px-4 py-2 rounded-xl text-sm font-semibold transition bg-blue-600 text-white shadow-sm">
+                                Tất cả
+                            </button>
+                            <button onclick="filterByBrand('iPhone')" data-brand="iPhone" class="brand-btn px-4 py-2 rounded-xl text-sm font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 flex items-center gap-1.5">
+                                <i class="fa-brands fa-apple text-base"></i> iPhone
+                            </button>
+                            <button onclick="filterByBrand('Samsung')" data-brand="Samsung" class="brand-btn px-4 py-2 rounded-xl text-sm font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">
+                                Samsung
+                            </button>
+                            <button onclick="filterByBrand('Xiaomi')" data-brand="Xiaomi" class="brand-btn px-4 py-2 rounded-xl text-sm font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">
+                                Xiaomi
+                            </button>
+                            <button onclick="filterByBrand('OPPO')" data-brand="OPPO" class="brand-btn px-4 py-2 rounded-xl text-sm font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">
+                                OPPO
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Bộ lọc sắp xếp giá -->
+                    <div class="flex items-center justify-between md:justify-end gap-3 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
+                        <label for="sortSelect" class="text-sm font-medium text-slate-600 whitespace-nowrap">Sắp xếp theo:</label>
+                        <select id="sortSelect" onchange="applyFilters()" class="bg-slate-100 border border-slate-200 text-slate-800 text-sm font-medium rounded-xl px-3.5 py-2 outline-none focus:border-blue-500 cursor-pointer">
+                            <option value="featured">Nổi bật nhất</option>
+                            <option value="price-asc">Giá: Thấp đến Cao</option>
+                            <option value="price-desc">Giá: Cao đến Thấp</option>
+                            <option value="discount">Giảm giá nhiều nhất</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tiêu đề kết quả -->
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900">
+                    Danh Sách Điện Thoại <span id="productCount" class="text-sm font-normal text-slate-500 ml-1">(8 sản phẩm)</span>
+                </h2>
+            </div>
+
+            <!-- Lưới hiển thị sản phẩm -->
+            <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+                <!-- Thẻ sản phẩm sẽ được render bằng JavaScript -->
+            </div>
+
+            <!-- Thông báo khi không tìm thấy sản phẩm -->
+            <div id="emptyState" class="hidden bg-white rounded-3xl border border-slate-200 p-12 text-center space-y-4">
+                <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto text-2xl">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900">Không tìm thấy sản phẩm phù hợp</h3>
+                <p class="text-sm text-slate-500 max-w-md mx-auto">Rất tiếc, chúng tôi không tìm thấy điện thoại nào khớp với từ khóa hoặc bộ lọc hiện tại của bạn.</p>
+                <button onclick="resetFilters()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition">
+                    Xem tất cả sản phẩm
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Chân trang (Footer) -->
+    <footer class="bg-slate-900 text-slate-300 mt-16 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center text-white">
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                        </div>
+                        <span class="text-xl font-extrabold text-white">Tech<span class="text-blue-400">Mobile</span></span>
+                    </div>
+                    <p class="text-sm text-slate-400 leading-relaxed">
+                        Hệ thống bán lẻ điện thoại di động chính hãng hàng đầu Việt Nam. Cam kết chất lượng, giá cả cạnh tranh và dịch vụ hậu mãi tận tâm.
+                    </p>
+                    <div class="flex gap-3 pt-1">
+                        <a href="#" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-blue-600 flex items-center justify-center text-white transition"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-rose-600 flex items-center justify-center text-white transition"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-sky-500 flex items-center justify-center text-white transition"><i class="fa-brands fa-tiktok"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-4">Thông tin & Chính sách</h4>
+                    <ul class="space-y-2.5 text-sm text-slate-400">
+                        <li><a href="#" class="hover:text-white transition">Chính sách bảo hành chính hãng</a></li>
+                        <li><a href="#" class="hover:text-white transition">Chính sách đổi trả 30 ngày</a></li>
+                        <li><a href="#" class="hover:text-white transition">Hướng dẫn mua hàng trả góp 0%</a></li>
+                        <li><a href="#" class="hover:text-white transition">Giao hàng & Thanh toán</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-4">Thương hiệu nổi bật</h4>
+                    <ul class="space-y-2.5 text-sm text-slate-400">
+                        <li><button onclick="filterByBrand('iPhone'); window.scrollTo({top: 400, behavior: 'smooth'})" class="hover:text-white transition">Điện thoại iPhone (Apple)</button></li>
+                        <li><button onclick="filterByBrand('Samsung'); window.scrollTo({top: 400, behavior: 'smooth'})" class="hover:text-white transition">Điện thoại Samsung Galaxy</button></li>
+                        <li><button onclick="filterByBrand('Xiaomi'); window.scrollTo({top: 400, behavior: 'smooth'})" class="hover:text-white transition">Điện thoại Xiaomi</button></li>
+                        <li><button onclick="filterByBrand('OPPO'); window.scrollTo({top: 400, behavior: 'smooth'})" class="hover:text-white transition">Điện thoại OPPO</button></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-4">Tổng đài hỗ trợ</h4>
+                    <ul class="space-y-2.5 text-sm text-slate-400">
+                        <li><span class="text-slate-500">Gọi mua hàng:</span> <strong class="text-white">1800.6601</strong> (7:30 - 22:00)</li>
+                        <li><span class="text-slate-500">Hỗ trợ kỹ thuật:</span> <strong class="text-white">1800.6602</strong> (8:00 - 21:30)</li>
+                        <li><span class="text-slate-500">Địa chỉ:</span> 123 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-800 mt-10 pt-6 text-center text-xs text-slate-500">
+                &copy; 2026 TechMobile Việt Nam. Tất cả các quyền được bảo lưu.
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL XEM CHI TIẾT SẢN PHẨM                                           -->
+    <!-- ===================================================================== -->
+    <div id="productModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 animate-fadeIn">
+            <!-- Header Modal -->
+            <div class="sticky top-0 bg-white/95 backdrop-blur-md px-6 py-4 border-b border-slate-100 flex items-center justify-between z-10">
+                <span id="modalBrandBadge" class="px-3 py-1 rounded-lg bg-blue-50 text-blue-600 text-xs font-bold uppercase tracking-wider">Hãng</span>
+                <button onclick="closeProductModal()" class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Nội dung chi tiết -->
+            <div id="modalContent" class="p-6 sm:p-8">
+                <!-- Nội dung được chèn động bởi JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- NGĂN KÉO GIỎ HÀNG (CART DRAWER)                                       -->
+    <!-- ===================================================================== -->
+    <div id="cartOverlay" onclick="toggleCartDrawer()" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-xs transition-opacity"></div>
+    <aside id="cartDrawer" class="fixed top-0 right-0 z-50 h-full w-full max-w-md bg-white shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
+        <!-- Header Giỏ hàng -->
+        <div class="px-6 py-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+            <div class="flex items-center gap-2.5">
+                <i class="fa-solid fa-bag-shopping text-blue-600 text-xl"></i>
+                <h3 class="text-lg font-bold text-slate-900">Giỏ hàng của bạn</h3>
+                <span id="drawerCartCount" class="text-xs font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">0</span>
+            </div>
+            <button onclick="toggleCartDrawer()" class="w-9 h-9 rounded-full bg-white border border-slate-200 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Danh sách sản phẩm trong giỏ -->
+        <div id="cartItemsContainer" class="flex-1 overflow-y-auto p-6 space-y-4">
+            <!-- Render động bởi JS -->
+        </div>
+
+        <!-- Footer Giỏ hàng & Thanh toán -->
+        <div id="cartFooter" class="border-t border-slate-200 p-6 bg-slate-50 space-y-4">
+            <div class="space-y-2 text-sm">
+                <div class="flex justify-between text-slate-500">
+                    <span>Tạm tính:</span>
+                    <span id="cartSubtotal" class="font-medium text-slate-800">0₫</span>
+                </div>
+                <div class="flex justify-between text-slate-500">
+                    <span>Phí vận chuyển:</span>
+                    <span class="font-medium text-emerald-600">Miễn phí</span>
+                </div>
+                <div class="flex justify-between text-base font-bold text-slate-900 pt-2 border-t border-slate-200">
+                    <span>Tổng cộng:</span>
+                    <span id="cartTotal" class="text-xl text-rose-600 font-extrabold">0₫</span>
+                </div>
+            </div>
+            <button onclick="openCheckoutModal()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-600/25 transition flex items-center justify-center gap-2 active:scale-[0.99]">
+                <span>Tiến hành đặt hàng</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+    </aside>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL ĐẶT HÀNG (CHECKOUT)                                             -->
+    <!-- ===================================================================== -->
+    <div id="checkoutModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-200">
+            <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                <h3 class="text-lg font-bold text-slate-900"><i class="fa-solid fa-clipboard-check text-blue-600 mr-2"></i>Thông tin đặt hàng</h3>
+                <button onclick="closeCheckoutModal()" class="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="checkoutForm" onsubmit="submitOrder(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Họ và tên người nhận *</label>
+                    <input type="text" id="customerName" required placeholder="Nguyễn Văn A" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Số điện thoại *</label>
+                    <input type="tel" id="customerPhone" required placeholder="0901 234 567" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Địa chỉ giao hàng *</label>
+                    <textarea id="customerAddress" required rows="2" placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 outline-none text-sm"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Phương thức thanh toán</label>
+                    <select id="paymentMethod" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 outline-none text-sm bg-white">
+                        <option value="COD">Thanh toán tiền mặt khi nhận hàng (COD)</option>
+                        <option value="BANK">Chuyển khoản ngân hàng / Quét mã QR</option>
+                        <option value="INSTALLMENT">Trả góp 0% qua thẻ tín dụng</option>
+                    </select>
+                </div>
+
+                <div class="bg-blue-50 p-3.5 rounded-xl flex items-center justify-between text-sm">
+                    <span class="font-medium text-slate-700">Tổng thanh toán:</span>
+                    <span id="checkoutTotalAmount" class="text-lg font-extrabold text-blue-700">0₫</span>
+                </div>
+
+                <div class="pt-2 flex gap-3">
+                    <button type="button" onclick="closeCheckoutModal()" class="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm transition">
+                        Quay lại
+                    </button>
+                    <button type="submit" class="flex-2 w-2/3 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-sm shadow-lg shadow-blue-600/25 transition">
+                        Xác nhận đặt hàng
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- THÔNG BÁO TOAST (THAY THẾ ALERT)                                      -->
+    <!-- ===================================================================== -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- ===================================================================== -->
+    <!-- MÃ JAVASCRIPT XỬ LÝ LOGIC                                             -->
+    <!-- ===================================================================== -->
+    <script>
+        // 1. Dữ liệu sản phẩm điện thoại mẫu
+        const products = [
+            {
+                id: 1,
+                name: "iPhone 16 Pro Max 256GB",
+                brand: "iPhone",
+                price: 31490000,
+                originalPrice: 34990000,
+                badge: "Bán chạy",
+                image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80",
+                specs: {
+                    screen: "6.9 inch, Super Retina XDR OLED, 120Hz",
+                    chip: "Apple A18 Pro 6 nhân",
+                    ram: "8 GB",
+                    storage: "256 GB",
+                    camera: "Chính 48MP & Phụ 48MP, 12MP",
+                    battery: "4685 mAh, Sạc nhanh 35W"
+                },
+                colors: ["Titan Sa Mạc", "Titan Tự Nhiên", "Titan Đen", "Titan Trắng"],
+                description: "iPhone 16 Pro Max sở hữu khung viền Titan cấp hàng không vũ trụ siêu bền, nút Điều Khiển Camera hoàn toàn mới cùng sức mạnh vượt trội từ chip A18 Pro."
+            },
+            {
+                id: 2,
+                name: "Samsung Galaxy S24 Ultra 5G",
+                brand: "Samsung",
+                price: 26990000,
+                originalPrice: 33990000,
+                badge: "Giảm sốc",
+                image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80",
+                specs: {
+                    screen: "6.8 inch, Dynamic AMOLED 2X, 2K+, 120Hz",
+                    chip: "Snapdragon 8 Gen 3 for Galaxy",
+                    ram: "12 GB",
+                    storage: "256 GB",
+                    camera: "Chính 200MP & Phụ 50MP, 12MP, 10MP",
+                    battery: "5000 mAh, Sạc nhanh 45W"
+                },
+                colors: ["Xám Titan", "Đen Titan", "Tím Titan"],
+                description: "Quyền năng Galaxy AI tích hợp sẵn, khung viền Titan sang trọng, bút S-Pen tích hợp cùng hệ thống camera mắt thần bóng đêm 200MP sắc nét."
+            },
+            {
+                id: 3,
+                name: "Xiaomi 14 Ultra 5G",
+                brand: "Xiaomi",
+                price: 24990000,
+                originalPrice: 29990000,
+                badge: "Leica Camera",
+                image: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80",
+                specs: {
+                    screen: "6.73 inch, LTPO AMOLED, 2K+, 120Hz",
+                    chip: "Snapdragon 8 Gen 3",
+                    ram: "16 GB",
+                    storage: "512 GB",
+                    camera: "4 Camera Leica 50MP cảm biến 1 inch",
+                    battery: "5000 mAh, Sạc siêu nhanh 90W"
+                },
+                colors: ["Đen Da Sinh Học", "Trắng"],
+                description: "Tuyệt tác nhiếp ảnh di động hợp tác cùng Leica, ống kính Summilux thế hệ mới cùng hiệu năng đỉnh cao và sạc siêu nhanh 90W."
+            },
+            {
+                id: 4,
+                name: "OPPO Find X7 Ultra",
+                brand: "OPPO",
+                price: 21490000,
+                originalPrice: 24990000,
+                badge: "Mới về",
+                image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=600&q=80",
+                specs: {
+                    screen: "6.82 inch, LTPO AMOLED, 2K+, 120Hz",
+                    chip: "Snapdragon 8 Gen 3",
+                    ram: "16 GB",
+                    storage: "256 GB",
+                    camera: "4 Camera Hasselblad 50MP",
+                    battery: "5000 mAh, SuperVOOC 100W"
+                },
+                colors: ["Nâu Sa Mạc", "Xanh Đại Dương"],
+                description: "Thiết kế mặt lưng da kết hợp kính sang trọng, hệ thống camera tele kép đầu tiên trên thế giới tinh chỉnh màu sắc bởi Hasselblad."
+            },
+            {
+                id: 5,
+                name: "iPhone 15 128GB Chính Hãng",
+                brand: "iPhone",
+                price: 19290000,
+                originalPrice: 22990000,
+                badge: "Giá tốt",
+                image: "https://images.unsplash.com/photo-1696446701796-da61225697cc?auto=format&fit=crop&w=600&q=80",
+                specs: {
+                    screen: "6.1 inch, Super Retina XDR OLED, 60Hz",
+                    chip: "Apple A16 Bionic",
+                    ram: "6 GB",
+                    storage: "128 GB",
+                    camera: "Chính 48MP & Phụ 12MP",
+                    battery: "3349 mAh, Cổng USB-C"
+                },
+                colors: ["Hồng", "Xanh Dương", "Đen", "Vàng"],
+                description: "Thiết kế Dynamic Island thông minh, mặt lưng kính pha màu tinh tế, camera chính 48MP chụp chân dung thế hệ mới cùng cổng sạc USB-C tiện lợi."
+            },
+            {
+                id: 6,
+                name: "Samsung Galaxy Z Flip6 5G",
+                brand: "Samsung",
+                price: 22990000,
+                originalPrice: 28990000,
+                badge: "Gập thời trang",
+                image: "https://images.unsplash.com/photo-1678911820864-e2c567c655d7?auto=format&fit=crop&w=600&q=80",
+                specs: {
+                    screen: "Chính 6.7\" FHD+ & Phụ 3.4\" Super AMOLED",
+                    chip: "Snapdragon 8 Gen 3 for Galaxy",
+                    ram: "12 GB",
+                    storage: "256 GB",
+                    camera: "Chính 50MP & Góc rộng 12MP",
+                    battery: "4000 mAh, Sạc nhanh 25W"
+                },
+                colors: ["Xanh Mint", "Xám Bóng Đêm", "Vàng"],
+                description: "Nhỏ gọn trong lòng bàn tay với bản lề Flex cải tiến không nếp gấp, màn hình ngoài FlexWindow đa năng tích hợp Galaxy AI."
+            },
+            {
+                id: 7,
+                name: "Xiaomi Redmi Note 13 Pro+ 5G",
+                brand: "Xiaomi",
+                price: 8990000,
+                originalPrice: 10990000,
+                badge: "Tầm trung vô địch",
+                image: "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?auto=format&fit=crop&w=600&q=80",
+                specs: {
+                    screen: "6.67 inch, AMOLED cong, 1.5K, 120Hz",
+                    chip: "MediaTek Dimensity 7200-Ultra",
+                    ram: "8 GB",
+                    storage: "256 GB",
+                    camera: "Chính 200MP OIS & Phụ 8MP, 2MP",
+                    battery: "5000 mAh, Sạc thần tốc 120W"
+                },
+                colors: ["Tím Cực Quang", "Đen Bán Dạ", "Trắng Ánh Trăng"],
+                description: "Màn hình cong tràn viền cao cấp, kháng nước bụi chuẩn IP68, camera 200MP chống rung quang học và sạc đầy 100% pin chỉ trong 19 phút."
+            },
+            {
+                id: 8,
+                name: "OPPO Reno12 Pro 5G",
+                brand: "OPPO",
+                price: 15490000,
+                originalPrice: 18990000,
+                badge: "Chuyên gia chân dung",
+                image: "https://images.unsplash.com/photo-1565849904461-04a58ad377e0?auto=format&fit=crop&w=600&q=80",
+                specs: {
+                    screen: "6.7 inch, AMOLED cong 4 cạnh, 120Hz",
+                    chip: "Dimensity 7300-Energy 5G",
+                    ram: "12 GB",
+                    storage: "512 GB",
+                    camera: "Chính 50MP, Tele 50MP & Góc rộng 8MP",
+                    battery: "5000 mAh, SuperVOOC 80W"
+                },
+                colors: ["Bạc Vũ Trụ", "Nâu Cà Phê"],
+                description: "Tích hợp bộ tính năng AI thông minh xóa vật thể, tách nền tức thì, thiết kế siêu mỏng nhẹ chống va đập chuẩn quân đội."
+            }
+        ];
+
+        // 2. Trạng thái ứng dụng (State)
+        let currentBrand = 'All';
+        let searchQuery = '';
+        let currentSort = 'featured';
+        let cart = [];
+
+        // Khởi tạo dữ liệu giỏ hàng từ localStorage nếu có
+        try {
+            const savedCart = localStorage.getItem('techmobile_cart');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+            }
+        } catch (e) {
+            console.error("Lỗi đọc giỏ hàng từ bộ nhớ:", e);
+        }
+
+        // 3. Hàm định dạng tiền tệ VNĐ
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        }
+
+        // 4. Hàm hiển thị thông báo Toast
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            const bgColor = type === 'success' ? 'bg-slate-900 text-white border-slate-700' : 'bg-rose-600 text-white border-rose-500';
+            const icon = type === 'success' ? '<i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>' : '<i class="fa-solid fa-circle-exclamation text-white text-lg"></i>';
+
+            toast.className = `${bgColor} border px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 text-sm font-medium transform transition-all duration-300 translate-y-4 opacity-0 pointer-events-auto max-w-sm`;
+            toast.innerHTML = `${icon}<span>${message}</span>`;
+
+            container.appendChild(toast);
+
+            // Kích hoạt hiệu ứng xuất hiện
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+            });
+
+            // Tự động ẩn sau 3 giây
+            setTimeout(() => {
+                toast.classList.add('translate-y-4', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // 5. Render danh sách sản phẩm
+        function renderProducts(productList) {
+            const grid = document.getElementById('productGrid');
+            const emptyState = document.getElementById('emptyState');
+            const countLabel = document.getElementById('productCount');
+
+            countLabel.textContent = `(${productList.length} sản phẩm)`;
+
+            if (productList.length === 0) {
+                grid.innerHTML = '';
+                grid.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            grid.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+
+            grid.innerHTML = productList.map(product => {
+                const discountPercent = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+                return `
+                <article class="product-card group rounded-2xl flex flex-col overflow-hidden">
+                    <!-- Khu vực hình ảnh -->
+                    <div class="relative pt-4 px-4 bg-slate-50/70">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-600 text-[11px] font-bold">
+                                Giảm ${discountPercent}%
+                            </span>
+                            <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-600 text-[11px] font-semibold shadow-sm">
+                                ${product.badge}
+                            </span>
+                        </div>
+                        <div onclick="openProductModal(${product.id})" class="product-card__image cursor-pointer overflow-hidden rounded-xl h-48 flex items-center justify-center p-2">
+                            <img src="${product.image}" 
+                                 onerror="this.src='https://placehold.co/400x400/f1f5f9/334155?text=${encodeURIComponent(product.name)}'"
+                                 alt="${product.name}" 
+                                 class="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                    </div>
+
+                    <!-- Thông tin sản phẩm -->
+                    <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-4">
+                        <div class="space-y-2">
+                            <div class="text-xs font-bold text-blue-600 uppercase tracking-wider">${product.brand}</div>
+                            <h3 onclick="openProductModal(${product.id})" class="font-bold text-base text-slate-900 group-hover:text-blue-600 transition cursor-pointer line-clamp-2 leading-snug">
+                                ${product.name}
+                            </h3>
+                            
+                            <!-- Thông số tóm tắt -->
+                            <div class="flex flex-wrap gap-1.5 pt-1">
+                                <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[11px] font-medium">${product.specs.ram}</span>
+                                <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[11px] font-medium">${product.specs.storage}</span>
+                                <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[11px] font-medium truncate max-w-[130px]">${product.specs.chip}</span>
+                            </div>
+                        </div>
+
+                        <!-- Giá & Nút hành động -->
+                        <div class="space-y-3 pt-2 border-t border-slate-100">
+                            <div>
+                                <div class="text-xs text-slate-400 line-through">${formatCurrency(product.originalPrice)}</div>
+                                <div class="text-lg font-extrabold text-rose-600">${formatCurrency(product.price)}</div>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <button onclick="openProductModal(${product.id})" class="flex-1 py-2.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs sm:text-sm transition hover:-translate-y-0.5">
+                                    Chi tiết
+                                </button>
+                                <button onclick="addToCart(${product.id})" class="flex-1 py-2.5 px-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-xs sm:text-sm shadow-sm shadow-blue-600/20 transition flex items-center justify-center gap-1.5 active:scale-95 hover:-translate-y-0.5">
+                                    <i class="fa-solid fa-cart-plus"></i>
+                                    <span>Thêm</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                `;
+            }).join('');
+        }
+
+        // 6. Xử lý lọc & sắp xếp
+        function applyFilters() {
+            currentSort = document.getElementById('sortSelect').value;
+
+            let filtered = products.filter(p => {
+                const matchBrand = currentBrand === 'All' || p.brand.toLowerCase() === currentBrand.toLowerCase();
+                const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                    p.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                    p.specs.chip.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchBrand && matchSearch;
+            });
+
+            // Sắp xếp
+            if (currentSort === 'price-asc') {
+                filtered.sort((a, b) => a.price - b.price);
+            } else if (currentSort === 'price-desc') {
+                filtered.sort((a, b) => b.price - a.price);
+            } else if (currentSort === 'discount') {
+                filtered.sort((a, b) => (b.originalPrice - b.price) - (a.originalPrice - a.price));
+            }
+
+            renderProducts(filtered);
+        }
+
+        function filterByBrand(brand) {
+            currentBrand = brand;
+            
+            // Cập nhật trạng thái active cho các nút hãng
+            document.querySelectorAll('.brand-btn').forEach(btn => {
+                if (btn.dataset.brand === brand) {
+                    btn.className = 'brand-btn active px-4 py-2 rounded-xl text-sm font-semibold transition bg-blue-600 text-white shadow-sm flex items-center gap-1.5';
+                } else {
+                    btn.className = 'brand-btn px-4 py-2 rounded-xl text-sm font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 flex items-center gap-1.5';
+                }
+            });
+
+            applyFilters();
+        }
+
+        function resetFilters() {
+            searchQuery = '';
+            document.getElementById('searchInputDesktop').value = '';
+            document.getElementById('searchInputMobile').value = '';
+            document.getElementById('clearSearchDesktop').classList.add('hidden');
+            document.getElementById('sortSelect').value = 'featured';
+            filterByBrand('All');
+        }
+
+        function clearSearch() {
+            searchQuery = '';
+            document.getElementById('searchInputDesktop').value = '';
+            document.getElementById('searchInputMobile').value = '';
+            document.getElementById('clearSearchDesktop').classList.add('hidden');
+            applyFilters();
+        }
+
+        // Lắng nghe sự kiện tìm kiếm
+        document.getElementById('searchInputDesktop').addEventListener('input', (e) => {
+            searchQuery = e.target.value.trim();
+            document.getElementById('searchInputMobile').value = e.target.value;
+            document.getElementById('clearSearchDesktop').classList.toggle('hidden', !searchQuery);
+            applyFilters();
+        });
+
+        document.getElementById('searchInputMobile').addEventListener('input', (e) => {
+            searchQuery = e.target.value.trim();
+            document.getElementById('searchInputDesktop').value = e.target.value;
+            applyFilters();
+        });
+
+        // 7. Modal Xem Chi Tiết Sản Phẩm
+        function openProductModal(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            const modal = document.getElementById('productModal');
+            const badge = document.getElementById('modalBrandBadge');
+            const content = document.getElementById('modalContent');
+
+            badge.textContent = `Thương hiệu: ${product.brand}`;
+
+            content.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8">
+                    <!-- Cột hình ảnh -->
+                    <div class="md:col-span-5 space-y-4">
+                        <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 flex items-center justify-center">
+                            <img src="${product.image}" 
+                                 onerror="this.src='https://placehold.co/400x400/f1f5f9/334155?text=${encodeURIComponent(product.name)}'"
+                                 alt="${product.name}" 
+                                 class="w-full h-64 object-cover rounded-xl shadow-sm">
+                        </div>
+                        <div class="bg-blue-50/70 rounded-xl p-3.5 text-xs text-slate-600 space-y-1.5">
+                            <div class="font-bold text-blue-800"><i class="fa-solid fa-box-open mr-1.5"></i>Bộ sản phẩm chuẩn gồm:</div>
+                            <p>Thân máy, Cáp sạc chính hãng, Cây lấy sim, Sách hướng dẫn sử dụng.</p>
+                        </div>
+                    </div>
+
+                    <!-- Cột thông số & Mua hàng -->
+                    <div class="md:col-span-7 space-y-5">
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-slate-900">${product.name}</h2>
+                            <p class="text-sm text-slate-500 mt-1.5 leading-relaxed">${product.description}</p>
+                        </div>
+
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/70 flex items-baseline gap-3">
+                            <span class="text-2xl sm:text-3xl font-extrabold text-rose-600">${formatCurrency(product.price)}</span>
+                            <span class="text-sm text-slate-400 line-through">${formatCurrency(product.originalPrice)}</span>
+                        </div>
+
+                        <!-- Màu sắc có sẵn -->
+                        <div>
+                            <span class="text-xs font-bold uppercase text-slate-400 block mb-2">Phiên bản màu sắc</span>
+                            <div class="flex flex-wrap gap-2">
+                                ${product.colors.map((c, idx) => `
+                                    <span class="px-3 py-1.5 rounded-lg text-xs font-semibold border ${idx === 0 ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-slate-200 bg-white text-slate-700'}">
+                                        ${c}
+                                    </span>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Bảng thông số kỹ thuật -->
+                        <div>
+                            <span class="text-xs font-bold uppercase text-slate-400 block mb-2">Thông số kỹ thuật nổi bật</span>
+                            <div class="rounded-xl border border-slate-200 overflow-hidden text-xs sm:text-sm">
+                                <div class="grid grid-cols-3 bg-slate-50 px-3.5 py-2.5 border-b border-slate-200">
+                                    <span class="text-slate-500 font-medium">Màn hình:</span>
+                                    <span class="col-span-2 font-semibold text-slate-800">${product.specs.screen}</span>
+                                </div>
+                                <div class="grid grid-cols-3 bg-white px-3.5 py-2.5 border-b border-slate-200">
+                                    <span class="text-slate-500 font-medium">Vi xử lý:</span>
+                                    <span class="col-span-2 font-semibold text-slate-800">${product.specs.chip}</span>
+                                </div>
+                                <div class="grid grid-cols-3 bg-slate-50 px-3.5 py-2.5 border-b border-slate-200">
+                                    <span class="text-slate-500 font-medium">RAM / ROM:</span>
+                                    <span class="col-span-2 font-semibold text-slate-800">${product.specs.ram} / ${product.specs.storage}</span>
+                                </div>
+                                <div class="grid grid-cols-3 bg-white px-3.5 py-2.5 border-b border-slate-200">
+                                    <span class="text-slate-500 font-medium">Camera:</span>
+                                    <span class="col-span-2 font-semibold text-slate-800">${product.specs.camera}</span>
+                                </div>
+                                <div class="grid grid-cols-3 bg-slate-50 px-3.5 py-2.5">
+                                    <span class="text-slate-500 font-medium">Pin & Sạc:</span>
+                                    <span class="col-span-2 font-semibold text-slate-800">${product.specs.battery}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Nút thêm vào giỏ -->
+                        <div class="pt-2 flex gap-3">
+                            <button onclick="addToCart(${product.id}); closeProductModal();" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-600/25 transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-cart-plus text-lg"></i>
+                                <span>Thêm vào giỏ hàng ngay</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeProductModal() {
+            const modal = document.getElementById('productModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+
+        // 8. Quản lý Giỏ Hàng (Thêm, Xóa, Cập nhật số lượng, Lưu LocalStorage)
+        function saveCart() {
+            try {
+                localStorage.setItem('techmobile_cart', JSON.stringify(cart));
+            } catch (e) {
+                console.error("Không thể lưu giỏ hàng:", e);
+            }
+            updateCartUI();
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            const existingItem = cart.find(item => item.id === productId);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    brand: product.brand,
+                    price: product.price,
+                    image: product.image,
+                    quantity: 1
+                });
+            }
+
+            saveCart();
+            showToast(`Đã thêm "${product.name}" vào giỏ hàng!`);
+        }
+
+        function updateQuantity(productId, delta) {
+            const itemIndex = cart.findIndex(item => item.id === productId);
+            if (itemIndex === -1) return;
+
+            cart[itemIndex].quantity += delta;
+
+            if (cart[itemIndex].quantity <= 0) {
+                cart.splice(itemIndex, 1);
+            }
+
+            saveCart();
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            saveCart();
+            showToast("Đã xóa sản phẩm khỏi giỏ hàng", "error");
+        }
+
+        function updateCartUI() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            document.getElementById('cartBadge').textContent = totalItems;
+            document.getElementById('drawerCartCount').textContent = `${totalItems} sản phẩm`;
+            document.getElementById('cartSubtotal').textContent = formatCurrency(totalAmount);
+            document.getElementById('cartTotal').textContent = formatCurrency(totalAmount);
+            document.getElementById('checkoutTotalAmount').textContent = formatCurrency(totalAmount);
+
+            const container = document.getElementById('cartItemsContainer');
+            const footer = document.getElementById('cartFooter');
+
+            if (cart.length === 0) {
+                footer.classList.add('hidden');
+                container.innerHTML = `
+                    <div class="h-full flex flex-col items-center justify-center text-center py-12 space-y-4">
+                        <div class="w-20 h-20 rounded-full bg-slate-100 text-slate-300 flex items-center justify-center text-3xl">
+                            <i class="fa-solid fa-cart-arrow-down"></i>
+                        </div>
+                        <div class="space-y-1">
+                            <h4 class="font-bold text-slate-800">Giỏ hàng đang trống</h4>
+                            <p class="text-xs text-slate-500 max-w-xs">Hãy khám phá các mẫu điện thoại mới nhất và thêm vào giỏ hàng nhé!</p>
+                        </div>
+                        <button onclick="toggleCartDrawer()" class="px-5 py-2.5 bg-blue-600 text-white text-xs font-bold rounded-xl hover:bg-blue-700 transition">
+                            Tiếp tục mua sắm
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            footer.classList.remove('hidden');
+            container.innerHTML = cart.map(item => `
+                <div class="flex gap-3.5 bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-2xs">
+                    <img src="${item.image}" 
+                         onerror="this.src='https://placehold.co/100x100/f1f5f9/334155?text=Phone'"
+                         alt="${item.name}" 
+                         class="w-20 h-20 object-cover rounded-xl bg-slate-50 flex-shrink-0 border border-slate-100">
+                    <div class="flex-1 min-w-0 flex flex-col justify-between">
+                        <div class="flex items-start justify-between gap-2">
+                            <h4 class="font-bold text-sm text-slate-900 line-clamp-2 leading-snug">${item.name}</h4>
+                            <button onclick="removeFromCart(${item.id})" title="Xóa" class="text-slate-400 hover:text-rose-600 transition p-1">
+                                <i class="fa-solid fa-trash-can text-sm"></i>
+                            </button>
+                        </div>
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="font-extrabold text-sm text-rose-600">${formatCurrency(item.price)}</span>
+                            
+                            <!-- Bộ điều chỉnh số lượng -->
+                            <div class="flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200">
+                                <button onclick="updateQuantity(${item.id}, -1)" class="w-7 h-7 rounded-md bg-white text-slate-700 hover:bg-slate-200 flex items-center justify-center text-xs font-bold shadow-2xs transition">
+                                    <i class="fa-solid fa-minus"></i>
+                                </button>
+                                <span class="w-8 text-center text-xs font-bold text-slate-900">${item.quantity}</span>
+                                <button onclick="updateQuantity(${item.id}, 1)" class="w-7 h-7 rounded-md bg-white text-slate-700 hover:bg-slate-200 flex items-center justify-center text-xs font-bold shadow-2xs transition">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Đóng / Mở ngăn kéo Giỏ hàng
+        function toggleCartDrawer() {
+            const drawer = document.getElementById('cartDrawer');
+            const overlay = document.getElementById('cartOverlay');
+            const isClosed = drawer.classList.contains('translate-x-full');
+
+            if (isClosed) {
+                overlay.classList.remove('hidden');
+                drawer.classList.remove('translate-x-full');
+                document.body.style.overflow = 'hidden';
+            } else {
+                overlay.classList.add('hidden');
+                drawer.classList.add('translate-x-full');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // 9. Xử lý Đặt hàng (Checkout)
+        function openCheckoutModal() {
+            if (cart.length === 0) return;
+            toggleCartDrawer(); // Đóng drawer giỏ hàng
+            const modal = document.getElementById('checkoutModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCheckoutModal() {
+            const modal = document.getElementById('checkoutModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+
+        function submitOrder(event) {
+            event.preventDefault();
+            const name = document.getElementById('customerName').value.trim();
+            
+            // Xóa giỏ hàng sau khi đặt thành công
+            cart = [];
+            saveCart();
+            closeCheckoutModal();
+            document.getElementById('checkoutForm').reset();
+
+            showToast(`Cảm ơn ${name}! Đơn hàng của bạn đã được tiếp nhận thành công.`);
+        }
+
+        // Đóng modal khi nhấn phím ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeProductModal();
+                closeCheckoutModal();
+                const drawer = document.getElementById('cartDrawer');
+                if (!drawer.classList.contains('translate-x-full')) {
+                    toggleCartDrawer();
+                }
+            }
+        });
+
+        // Khởi chạy ban đầu khi tải trang
+        window.addEventListener('DOMContentLoaded', () => {
+            renderProducts(products);
+            updateCartUI();
+        });
+    </script>
+</body>
+</html>
